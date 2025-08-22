@@ -8,6 +8,8 @@ on:
     branches: [ "main" ]  # 触发分支
   pull_request:
     branches: [ "main" ]
+  release:
+    types: [published]  # 当新 release 发布时触发
 
 jobs:
   build:
