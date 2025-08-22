@@ -36,6 +36,22 @@ jobs:
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml  --file initial/pom.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
+        
+    - name: Get artifact info
+      id: artifact
+      run: |
+        ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+        VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+        echo "name=$ARTIFACT_ID" >> $GITHUB_OUTPUT
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "path=target/$ARTIFACT_ID-$VERSION.jar" >> $GITHUB_OUTPUT
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ steps.artifact.outputs.name }}-${{ steps.artifact.outputs.version }}.jar
+        path: ${{ steps.artifact.outputs.path }}
+        
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
